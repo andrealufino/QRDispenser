@@ -70,4 +70,19 @@ public extension QRDispenser {
         
         return generate(from: dataString)
     }
+    
+    static func generate(wiFiSSID ssid: String, password: String, encryption: WiFiEncryption) -> UIImage {
+        
+        guard !ssid.isEmpty else {
+            fatalError("ssid cannot be empty.")
+        }
+        
+        guard !password.isEmpty else {
+            fatalError("password cannot be empty.")
+        }
+        
+        let dataString = "WIFI:S:\(ssid);T:\(encryption.string);P:\(password);;"
+        
+        return generate(from: dataString)
+    }
 }
