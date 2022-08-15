@@ -61,4 +61,13 @@ public extension QRDispenser {
         
         return generate(from: dataString)
     }
+    
+    static func generate(phoneNumber: String) -> UIImage {
+        
+        // TODO: Add phone number validation
+        
+        let dataString = "tel:\(phoneNumber)"
+        
+        return generate(from: dataString)
+    }
 }
