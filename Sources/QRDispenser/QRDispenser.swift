@@ -52,4 +52,13 @@ public extension QRDispenser {
         
         return generate(from: text)
     }
+    
+    static func generate(email: String) -> UIImage {
+        
+        // TODO: Add email validation
+        
+        let dataString = "mailto:\(email)"
+        
+        return generate(from: dataString)
+    }
 }
