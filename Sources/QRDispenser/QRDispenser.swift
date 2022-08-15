@@ -48,5 +48,8 @@ public struct QRDispenser {
 
 public extension QRDispenser {
     
-    
+    static func generate(simpleText text: String) -> UIImage {
+        
+        return generate(from: text)
+    }
 }
