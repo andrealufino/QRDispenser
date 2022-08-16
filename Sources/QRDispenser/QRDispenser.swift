@@ -106,6 +106,10 @@ public extension QRDispenser {
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(url: URL) -> UIImage {
         
+        guard Validator.validate(url.absoluteString, type: .url) else {
+            fatalError("The url \(url.absoluteString) is not a valid url.")
+        }
+        
         return generate(from: url.absoluteString)
     }
     
@@ -114,7 +118,9 @@ public extension QRDispenser {
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(email: String) -> UIImage {
         
-        // TODO: Add email validation
+        guard Validator.validate(email, type: .email) else {
+            fatalError("The email \(email) is not a valid email address.")
+        }
         
         let dataString = "mailto:\(email)"
         
@@ -126,7 +132,9 @@ public extension QRDispenser {
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(phoneNumber: String) -> UIImage {
         
-        // TODO: Add phone number validation
+        guard Validator.validate(phoneNumber, type: .phoneNumber) else {
+            fatalError("The phone number \(phoneNumber) is not a valid phone number.")
+        }
         
         let dataString = "tel:\(phoneNumber)"
         
