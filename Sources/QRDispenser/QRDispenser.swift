@@ -10,6 +10,24 @@ import Foundation
 import UIKit
 
 
+enum WiFiEncryption {
+    case wep
+    case wpa
+    case none
+    
+    var string: String {
+        switch self {
+        case .wep:
+            return "WEP"
+        case .wpa:
+            return "WPA"
+        default:
+            return "nopass"
+        }
+    }
+}
+
+
 public struct QRDispenser {
     
     public static func generate(from text: String) -> UIImage {
