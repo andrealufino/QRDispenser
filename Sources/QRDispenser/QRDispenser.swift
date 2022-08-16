@@ -32,6 +32,8 @@ public enum WiFiEncryption {
 
 public struct QRDispenser {
     
+    // This code has been taken from Hacking With Swift forum.
+    // https://www.hackingwithswift.com/forums/swiftui/qr-code-generator-cifilter-colours-for-light-dark-mode/13077
     public static func generate(from text: String) -> UIImage {
         
         let context = CIContext()
