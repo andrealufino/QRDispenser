@@ -5,12 +5,14 @@
 //  Created by Andrea Mario Lufino on 15/08/22.
 //
 
+import CoreImage
+import CoreImage.CIFilterBuiltins
 import CoreLocation
 import Foundation
 import UIKit
 
 
-enum WiFiEncryption {
+public enum WiFiEncryption {
     case wep
     case wpa
     case none
