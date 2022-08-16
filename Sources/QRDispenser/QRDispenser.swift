@@ -5,6 +5,7 @@
 //  Created by Andrea Mario Lufino on 15/08/22.
 //
 
+import CoreLocation
 import Foundation
 import UIKit
 
@@ -91,6 +92,15 @@ public extension QRDispenser {
         
         let dataString = "geo:\(latitude),\(longitude),\(altitude)"
         
-        return generate(from: dataString)   
+        return generate(from: dataString)
+    }
+    
+    static func generate(location: CLLocation) -> UIImage {
+        
+        return generate(
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude,
+            altitude: location.altitude
+        )
     }
 }
