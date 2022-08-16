@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 
 public struct QRDispenser {
@@ -84,5 +85,12 @@ public extension QRDispenser {
         let dataString = "WIFI:S:\(ssid);T:\(encryption.string);P:\(password);;"
         
         return generate(from: dataString)
+    }
+    
+    static func generate(latitude: Double, longitude: Double, altitude: Double) -> UIImage {
+        
+        let dataString = "geo:\(latitude),\(longitude),\(altitude)"
+        
+        return generate(from: dataString)   
     }
 }
