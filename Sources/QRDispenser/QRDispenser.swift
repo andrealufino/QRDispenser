@@ -12,6 +12,8 @@ import Foundation
 import UIKit
 
 
+// MARK: - WiFi Encryption
+
 /// Enumeration used to indicate which type of encryption is present in
 /// the wifi network that is going to be represented with a QR code.
 public enum WiFiEncryption {
@@ -30,6 +32,9 @@ public enum WiFiEncryption {
         }
     }
 }
+
+
+// MARK: - QRDispenser
 
 
 /// `QRDispenser` is the structure that generate the QR code returning it as `UIImage`.
@@ -84,6 +89,8 @@ public struct QRDispenser {
 }
 
 
+// MARK: - QRDispenser - Specific methods
+
 public extension QRDispenser {
     
     /// Generate a qr code containing a simple text.
@@ -92,6 +99,14 @@ public extension QRDispenser {
     static func generate(simpleText text: String) -> UIImage {
         
         return generate(from: text)
+    }
+    
+    /// Generate a qr code representing a url.
+    /// - Parameter url: The url to represent.
+    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
+    static func generate(url: URL) -> UIImage {
+        
+        return generate(from: url.absoluteString)
     }
     
     /// Generate a qr code representing an email.
