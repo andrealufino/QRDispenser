@@ -12,6 +12,8 @@ import Foundation
 import UIKit
 
 
+/// Enumeration used to indicate which type of encryption is present in
+/// the wifi network that is going to be represented with a QR code.
 public enum WiFiEncryption {
     case wep
     case wpa
@@ -30,10 +32,22 @@ public enum WiFiEncryption {
 }
 
 
+/// `QRDispenser` is the structure that generate the QR code returning it as `UIImage`.
+///
+/// This structure provides static methods to generate qr codes. It does not need to be instantiated.
+///
 public struct QRDispenser {
     
     // This code has been taken from Hacking With Swift forum.
     // https://www.hackingwithswift.com/forums/swiftui/qr-code-generator-cifilter-colours-for-light-dark-mode/13077
+    
+    /// Generate a qr code containing the `text` as data.
+    ///
+    /// This method generates a qr code containing the passed `text` parameter as internal data.
+    /// The format of the text is assumed to be correct, so no checks are made on that.
+    ///
+    /// - Parameter text: The text to represent as qr code.
+    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     public static func generate(from text: String) -> UIImage {
         
         let context = CIContext()
@@ -72,11 +86,17 @@ public struct QRDispenser {
 
 public extension QRDispenser {
     
+    /// Generate a qr code containing a simple text.
+    /// - Parameter text: The text to represent.
+    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(simpleText text: String) -> UIImage {
         
         return generate(from: text)
     }
     
+    /// Generate a qr code representing an email.
+    /// - Parameter email: The email address to represent in the qr code.
+    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(email: String) -> UIImage {
         
         // TODO: Add email validation
@@ -86,6 +106,9 @@ public extension QRDispenser {
         return generate(from: dataString)
     }
     
+    /// Generate a qr code representing a phone number.
+    /// - Parameter phoneNumber: The phone number to represent in the qr code.
+    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(phoneNumber: String) -> UIImage {
         
         // TODO: Add phone number validation
@@ -95,6 +118,12 @@ public extension QRDispenser {
         return generate(from: dataString)
     }
     
+    /// Generate a qr code representing a WiFi network.
+    /// - Parameters:
+    ///   - ssid: The SSID of the network (network name).
+    ///   - password: The password of the network.
+    ///   - encryption: The encryption of the network.
+    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(wiFiSSID ssid: String, password: String, encryption: WiFiEncryption) -> UIImage {
         
         guard !ssid.isEmpty else {
@@ -110,6 +139,12 @@ public extension QRDispenser {
         return generate(from: dataString)
     }
     
+    /// Generate a qr code representing a location.
+    /// - Parameters:
+    ///   - latitude: The latitude as `Double`.
+    ///   - longitude: The longitude as `Double`.
+    ///   - altitude: The altitude as `Double`.
+    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(latitude: Double, longitude: Double, altitude: Double) -> UIImage {
         
         let dataString = "geo:\(latitude),\(longitude),\(altitude)"
@@ -117,6 +152,9 @@ public extension QRDispenser {
         return generate(from: dataString)
     }
     
+    /// Generate a qr code representing a location.
+    /// - Parameter location: The location as `CLLocation` object.
+    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(location: CLLocation) -> UIImage {
         
         return generate(
