@@ -12,6 +12,17 @@ import Foundation
 import UIKit
 
 
+// MARK: - QRDispenserError
+
+/// Enumeration representing an error that can occur during qr code creation.
+public enum QRDispenserError: Error, LocalizedError {
+    case invalidURL
+    case invalidEmail
+    case invalidPhoneNumber
+    case invalidSSID
+    case invalidPassword
+}
+
 // MARK: - WiFi Encryption
 
 /// Enumeration used to indicate which type of encryption is present in
@@ -104,10 +115,11 @@ public extension QRDispenser {
     /// Generate a qr code representing a url.
     /// - Parameter url: The url to represent.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    static func generate(url: URL) -> UIImage {
+    static func generate(url: URL) throws -> UIImage {
         
         guard Validator.validate(url.absoluteString, type: .url) else {
-            fatalError("The url \(url.absoluteString) is not a valid url.")
+            print("QRDispenser | Url \(url) is not a valid url.")
+            throw QRDispenserError.invalidURL
         }
         
         return generate(from: url.absoluteString)
@@ -116,10 +128,11 @@ public extension QRDispenser {
     /// Generate a qr code representing an email.
     /// - Parameter email: The email address to represent in the qr code.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    static func generate(email: String) -> UIImage {
+    static func generate(email: String) throws -> UIImage {
         
         guard Validator.validate(email, type: .email) else {
-            fatalError("The email \(email) is not a valid email address.")
+            print("QRDispenser | The email \(email) is not a valid email address.")
+            throw QRDispenserError.invalidEmail
         }
         
         let dataString = "mailto:\(email)"
@@ -130,10 +143,11 @@ public extension QRDispenser {
     /// Generate a qr code representing a phone number.
     /// - Parameter phoneNumber: The phone number to represent in the qr code.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    static func generate(phoneNumber: String) -> UIImage {
+    static func generate(phoneNumber: String) throws -> UIImage {
         
         guard Validator.validate(phoneNumber, type: .phoneNumber) else {
-            fatalError("The phone number \(phoneNumber) is not a valid phone number.")
+            print("QRDispenser | The phone number \(phoneNumber) is not a valid phone number.")
+            throw QRDispenserError.invalidPhoneNumber
         }
         
         let dataString = "tel:\(phoneNumber)"
@@ -147,14 +161,16 @@ public extension QRDispenser {
     ///   - password: The password of the network.
     ///   - encryption: The encryption of the network.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    static func generate(wiFiSSID ssid: String, password: String, encryption: WiFiEncryption) -> UIImage {
+    static func generate(wiFiSSID ssid: String, password: String, encryption: WiFiEncryption) throws -> UIImage {
         
         guard !ssid.isEmpty else {
-            fatalError("ssid cannot be empty.")
+            print("QRDispenser | ssid cannot be empty.")
+            throw QRDispenserError.invalidSSID
         }
         
         guard !password.isEmpty else {
-            fatalError("password cannot be empty.")
+            print("QRDispenser | password cannot be empty.")
+            throw QRDispenserError.invalidPassword
         }
         
         let dataString = "WIFI:S:\(ssid);T:\(encryption.string);P:\(password);;"
