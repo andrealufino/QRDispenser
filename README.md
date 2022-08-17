@@ -1,4 +1,4 @@
-[logo](qrcode_small.png)
+![logo](qrcode_small.png)
 
 # QRDispenser
 
