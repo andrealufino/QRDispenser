@@ -16,10 +16,8 @@ public extension URL {
     /// The representation of the URL as a qr code (`UIImage` object).
     var qrRepresentation: UIImage {
         
-        guard Validator.validate(self.absoluteString, type: .url) else {
-            fatalError("The URL \(self.absoluteString) is not a valid network url.")
+        get throws {
+            try QRDispenser.generate(url: self)
         }
-        
-        return QRDispenser.generate(url: self)
     }
 }

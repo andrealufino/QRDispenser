@@ -12,17 +12,6 @@ import Foundation
 import UIKit
 
 
-// MARK: - QRDispenserError
-
-/// Enumeration representing an error that can occur during qr code creation.
-public enum QRDispenserError: Error, LocalizedError {
-    case invalidURL
-    case invalidEmail
-    case invalidPhoneNumber
-    case invalidSSID
-    case invalidPassword
-}
-
 // MARK: - WiFi Encryption
 
 /// Enumeration used to indicate which type of encryption is present in
@@ -54,6 +43,21 @@ public enum WiFiEncryption {
 ///
 public struct QRDispenser {
     
+    static var isDebugPrintingActive = true
+    
+    private init() {  }
+    
+    // MARK: - QRDispenserError
+
+    /// Enumeration representing an error that can occur during qr code creation.
+    public enum QRDispenserError: Error, LocalizedError {
+        case invalidURL
+        case invalidEmail
+        case invalidPhoneNumber
+        case invalidSSID
+        case invalidPassword
+    }
+    
     // This code has been taken from Hacking With Swift forum.
     // https://www.hackingwithswift.com/forums/swiftui/qr-code-generator-cifilter-colours-for-light-dark-mode/13077
     
@@ -64,7 +68,7 @@ public struct QRDispenser {
     ///
     /// - Parameter text: The text to represent as qr code.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    public static func generate(from text: String) -> UIImage {
+    static func generate(from text: String) -> UIImage {
         
         let context = CIContext()
         
@@ -113,12 +117,15 @@ public extension QRDispenser {
     }
     
     /// Generate a qr code representing a url.
+    /// The format of the url is validated before trying to generate the code.
     /// - Parameter url: The url to represent.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(url: URL) throws -> UIImage {
         
         guard Validator.validate(url.absoluteString, type: .url) else {
-            print("QRDispenser | Url \(url) is not a valid url.")
+            if isDebugPrintingActive {
+                print("QRDispenser | Url \(url) is not a valid url.")
+            }
             throw QRDispenserError.invalidURL
         }
         
@@ -126,12 +133,15 @@ public extension QRDispenser {
     }
     
     /// Generate a qr code representing an email.
+    /// The format of the email is validate before trying to generate the code.
     /// - Parameter email: The email address to represent in the qr code.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(email: String) throws -> UIImage {
         
         guard Validator.validate(email, type: .email) else {
-            print("QRDispenser | The email \(email) is not a valid email address.")
+            if isDebugPrintingActive {
+                print("QRDispenser | The email \(email) is not a valid email address.")
+            }
             throw QRDispenserError.invalidEmail
         }
         
@@ -141,12 +151,15 @@ public extension QRDispenser {
     }
     
     /// Generate a qr code representing a phone number.
+    /// The format of the phone number is validated before trying to generate the code.
     /// - Parameter phoneNumber: The phone number to represent in the qr code.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     static func generate(phoneNumber: String) throws -> UIImage {
         
         guard Validator.validate(phoneNumber, type: .phoneNumber) else {
-            print("QRDispenser | The phone number \(phoneNumber) is not a valid phone number.")
+            if isDebugPrintingActive {
+                print("QRDispenser | The phone number \(phoneNumber) is not a valid phone number.")
+            }
             throw QRDispenserError.invalidPhoneNumber
         }
         
@@ -164,12 +177,16 @@ public extension QRDispenser {
     static func generate(wiFiSSID ssid: String, password: String, encryption: WiFiEncryption) throws -> UIImage {
         
         guard !ssid.isEmpty else {
-            print("QRDispenser | ssid cannot be empty.")
+            if isDebugPrintingActive {
+                print("QRDispenser | ssid cannot be empty.")
+            }
             throw QRDispenserError.invalidSSID
         }
         
         guard !password.isEmpty else {
-            print("QRDispenser | password cannot be empty.")
+            if isDebugPrintingActive {
+                print("QRDispenser | password cannot be empty.")
+            }
             throw QRDispenserError.invalidPassword
         }
         
