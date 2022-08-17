@@ -1,7 +1,5 @@
-# QRDispenser
-
 <p align="center">
-  <img src="qrcode.png" width="150" height="150" />
+  <img src="Icon.png" height="250" />
 </p>
 
 `QRDispenser` is a lightweight library to generate a QR code as image (`UIImage`) in your app. It uses only native components, with no dependency from other libraries. This allows you to also fork the project and write your own implementation in case you need it, without worrying about external frameworks.
