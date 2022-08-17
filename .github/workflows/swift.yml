@@ -1,0 +1,21 @@
+- name: GitHub Create Tag Release
+  # You may pin to the exact commit or the version.
+  # uses: Roang-zero1/github-create-release-action@5cf058ddffa6fa04e5cda07c98570c757dc4a0e1
+  uses: Roang-zero1/github-create-release-action@v2.1.0
+  with:
+    # Regular expression to verify that the version is in a correct format. Defaults to .* (accept everything).
+    version_regex: # optional, default is ^.*$
+    # Any version matching this regular expression will be marked as pre-release. Disabled by default.
+    prerelease_regex: # optional, default is 
+    # Create the releases as draft (true|false [default: false]). Existing will not be updated from released to draft.
+    create_draft: # optional, default is false
+    # Controls whether an existing release should be updated with data from the latest push (true|false [default: false]).
+    update_existing: # optional, default is false
+    # Allows to pass an already created tag, forces update_existing to true.
+    created_tag: # optional, default is 
+    # Allows to pass a title for the release.
+    release_title: # optional, default is 
+    # Path of file that contains the Markdown formatted changelog.
+    changelog_file: # optional, default is CHANGELOG.md
+    # Heading level at which the tag headings exist.
+    changelog_heading: # optional, default is h2
