@@ -54,8 +54,11 @@ public struct QRDispenser {
         case invalidURL
         case invalidEmail
         case invalidPhoneNumber
-        case invalidSSID
-        case invalidPassword
+        case emptySSID
+        case emptyPassword
+        case cgiImageCreationFailure
+        case filterOutputImageNil
+        case generic(String)
     }
     
     // This code has been taken from Hacking With Swift forum.
@@ -67,12 +70,14 @@ public struct QRDispenser {
     /// The format of the text is assumed to be correct, so no checks are made on that.
     ///
     /// - Parameter text: The text to represent as qr code.
-    /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    static func generate(from text: String) -> UIImage {
+    /// - Returns: An `UIImage` object representing the qr code.
+    /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`
+    /// or `filterOutputImageNil`.
+    static func generate(from text: String) throws -> UIImage {
         
         let context = CIContext()
         
-        var qrImage = UIImage(systemName: "xmark.circle") ?? UIImage()
+        var qrImage = UIImage()
         let data    = Data(text.utf8)
         let filter  = CIFilter.qrCodeGenerator()
 
@@ -96,10 +101,14 @@ public struct QRDispenser {
                 let lightImage  = context.createCGImage(lightCIImage, from: lightCIImage.extent).map(UIImage.init)!
 
                 qrImage = osTheme == .light ? lightImage : darkImage
+                
+                return qrImage
+            } else {
+                throw QRDispenserError.cgiImageCreationFailure
             }
+        } else {
+            throw QRDispenserError.filterOutputImageNil
         }
-        
-        return qrImage
     }
 }
 
@@ -111,15 +120,19 @@ public extension QRDispenser {
     /// Generate a qr code containing a simple text.
     /// - Parameter text: The text to represent.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    static func generate(simpleText text: String) -> UIImage {
+    /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`
+    /// or `filterOutputImageNil`.
+    static func generate(simpleText text: String) throws -> UIImage {
         
-        return generate(from: text)
+        return try generate(from: text)
     }
     
     /// Generate a qr code representing a url.
     /// The format of the url is validated before trying to generate the code.
     /// - Parameter url: The url to represent.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
+    /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`,
+    /// `filterOutputImageNil` or `invalidURL`.
     static func generate(url: URL) throws -> UIImage {
         
         guard Validator.validate(url.absoluteString, type: .url) else {
@@ -129,13 +142,15 @@ public extension QRDispenser {
             throw QRDispenserError.invalidURL
         }
         
-        return generate(from: url.absoluteString)
+        return try generate(from: url.absoluteString)
     }
     
     /// Generate a qr code representing an email.
     /// The format of the email is validate before trying to generate the code.
     /// - Parameter email: The email address to represent in the qr code.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
+    /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`,
+    /// `filterOutputImageNil` or `invalidEmail`.
     static func generate(email: String) throws -> UIImage {
         
         guard Validator.validate(email, type: .email) else {
@@ -147,13 +162,15 @@ public extension QRDispenser {
         
         let dataString = "mailto:\(email)"
         
-        return generate(from: dataString)
+        return try generate(from: dataString)
     }
     
     /// Generate a qr code representing a phone number.
     /// The format of the phone number is validated before trying to generate the code.
     /// - Parameter phoneNumber: The phone number to represent in the qr code.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
+    /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`,
+    /// `filterOutputImageNil` or `invalidPhoneNumber`.
     static func generate(phoneNumber: String) throws -> UIImage {
         
         guard Validator.validate(phoneNumber, type: .phoneNumber) else {
@@ -165,7 +182,7 @@ public extension QRDispenser {
         
         let dataString = "tel:\(phoneNumber)"
         
-        return generate(from: dataString)
+        return try generate(from: dataString)
     }
     
     /// Generate a qr code representing a WiFi network.
@@ -174,25 +191,27 @@ public extension QRDispenser {
     ///   - password: The password of the network.
     ///   - encryption: The encryption of the network.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
+    /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`,
+    /// `filterOutputImageNil`,`emptySSID` or `emptyPassword`.
     static func generate(wiFiSSID ssid: String, password: String, encryption: WiFiEncryption) throws -> UIImage {
         
         guard !ssid.isEmpty else {
             if isDebugPrintingActive {
                 print("QRDispenser | ssid cannot be empty.")
             }
-            throw QRDispenserError.invalidSSID
+            throw QRDispenserError.emptySSID
         }
         
         guard !password.isEmpty else {
             if isDebugPrintingActive {
                 print("QRDispenser | password cannot be empty.")
             }
-            throw QRDispenserError.invalidPassword
+            throw QRDispenserError.emptyPassword
         }
         
         let dataString = "WIFI:S:\(ssid);T:\(encryption.string);P:\(password);;"
         
-        return generate(from: dataString)
+        return try generate(from: dataString)
     }
     
     /// Generate a qr code representing a location.
@@ -201,19 +220,23 @@ public extension QRDispenser {
     ///   - longitude: The longitude as `Double`.
     ///   - altitude: The altitude as `Double`.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    static func generate(latitude: Double, longitude: Double, altitude: Double) -> UIImage {
+    /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`
+    /// or `filterOutputImageNil`.
+    static func generate(latitude: Double, longitude: Double, altitude: Double) throws -> UIImage {
         
         let dataString = "geo:\(latitude),\(longitude),\(altitude)"
         
-        return generate(from: dataString)
+        return try generate(from: dataString)
     }
     
     /// Generate a qr code representing a location.
     /// - Parameter location: The location as `CLLocation` object.
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
-    static func generate(location: CLLocation) -> UIImage {
+    /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`
+    /// or `filterOutputImageNil`.
+    static func generate(location: CLLocation) throws -> UIImage {
         
-        return generate(
+        return try generate(
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude,
             altitude: location.altitude
