@@ -18,6 +18,24 @@ The structure of the library is simple: there's only one class that you use and 
 
 Every method returns a `UIImage` object or throws an error. The error enumeration is `QRDispenserError`. The code is well documented about every method, if you need more details check directly on Xcode.
 
+There's also a nice thing that I plan to expand in the future that is an extension for `URL`. The extension has a computed property that returns a QR code containing the url, if the url is a network url (no local ones for now). It works like this: 
+
+```swift
+let url = "https://andrealufino.com"
+
+let qrImage = url.qrRepresentation
+```
+
+I'd like to expand this kind of structure also to other types, like strings, contacts and events.
+
+## iOS version
+
+This library needs at least iOS 14.
+
+## Installation
+
+The library is available via Swift Package Manager. Just add the url of this repository.
+
 ## Author
 
 [Andrea Mario Lufino](andrealufino.com), iOS developer since 2010.
