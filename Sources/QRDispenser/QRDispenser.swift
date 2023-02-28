@@ -87,7 +87,7 @@ public struct QRDispenser {
         var osTheme: UIUserInterfaceStyle { return UIScreen.main.traitCollection.userInterfaceStyle }
         filter.setValue(data, forKey: "inputMessage")
 
-        let transform = CGAffineTransform(scaleX: 8, y: 8)
+        let transform = CGAffineTransform(scaleX: 10, y: 10)
         if let outputImage = filter.outputImage?.transformed(by: transform) {
             if let _ = context.createCGImage(outputImage, from: outputImage.extent) {
                 
