@@ -69,11 +69,13 @@ public struct QRDispenser {
     /// This method generates a qr code containing the passed `text` parameter as internal data.
     /// The format of the text is assumed to be correct, so no checks are made on that.
     ///
-    /// - Parameter text: The text to represent as qr code.
+    /// - Parameters:
+    ///   - text: The text to represent as qr code.
+    ///   - tint: The tint color to apply to the image. Normally, no tint is applied.
     /// - Returns: An `UIImage` object representing the qr code.
     /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`
     /// or `filterOutputImageNil`.
-    static func generate(from text: String) throws -> UIImage {
+    static func generate(from text: String, tint: UIColor? = nil) throws -> UIImage {
         
         let context = CIContext()
         
@@ -85,22 +87,29 @@ public struct QRDispenser {
         var osTheme: UIUserInterfaceStyle { return UIScreen.main.traitCollection.userInterfaceStyle }
         filter.setValue(data, forKey: "inputMessage")
 
-        let transform = CGAffineTransform(scaleX: 8, y: 8)
+        let transform = CGAffineTransform(scaleX: 10, y: 10)
         if let outputImage = filter.outputImage?.transformed(by: transform) {
             if let _ = context.createCGImage(outputImage, from: outputImage.extent) {
+                
+                if let tint = tint {
+                    
+                    let tintedImage  = outputImage.tinted(using: tint)!
+                    qrImage = context.createCGImage(tintedImage, from: tintedImage.extent).map(UIImage.init)!
+                    
+                } else {
+                    let maskFilter = CIFilter.blendWithMask()
+                    maskFilter.maskImage = outputImage.applyingFilter("CIColorInvert")
+                    maskFilter.inputImage = CIImage(color: .white)
 
-                let maskFilter = CIFilter.blendWithMask()
-                maskFilter.maskImage = outputImage.applyingFilter("CIColorInvert")
-                maskFilter.inputImage = CIImage(color: .white)
+                    let darkCIImage = maskFilter.outputImage!
+                    maskFilter.inputImage = CIImage(color: .black)
 
-                let darkCIImage = maskFilter.outputImage!
-                maskFilter.inputImage = CIImage(color: .black)
+                    let lightCIImage = maskFilter.outputImage!
+                    let darkImage   = context.createCGImage(darkCIImage, from: darkCIImage.extent).map(UIImage.init)!
+                    let lightImage  = context.createCGImage(lightCIImage, from: lightCIImage.extent).map(UIImage.init)!
 
-                let lightCIImage = maskFilter.outputImage!
-                let darkImage   = context.createCGImage(darkCIImage, from: darkCIImage.extent).map(UIImage.init)!
-                let lightImage  = context.createCGImage(lightCIImage, from: lightCIImage.extent).map(UIImage.init)!
-
-                qrImage = osTheme == .light ? lightImage : darkImage
+                    qrImage = osTheme == .light ? lightImage : darkImage
+                }
                 
                 return qrImage
             } else {
@@ -133,7 +142,7 @@ public extension QRDispenser {
     /// - Returns: An `UIImage` object representing the qr code or a template image in case something went wrong.
     /// - Throws: An error of type `QRDispenserError` that can be `cgiImageCreationFailure`,
     /// `filterOutputImageNil` or `invalidURL`.
-    static func generate(url: URL) throws -> UIImage {
+    static func generate(url: URL, tint: UIColor? = nil) throws -> UIImage {
         
         guard Validator.validate(url.absoluteString, type: .url) else {
             if isDebugPrintingActive {
@@ -142,7 +151,7 @@ public extension QRDispenser {
             throw QRDispenserError.invalidURL
         }
         
-        return try generate(from: url.absoluteString)
+        return try generate(from: url.absoluteString, tint: tint)
     }
     
     /// Generate a qr code representing an email.
