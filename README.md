@@ -8,7 +8,7 @@
 
 The structure of the library is simple: there's only one class that you use and it's the `QRDispenser`. It has these methods:
 
-- `generate(from: String)`
+- `generate(from: String, tint: UIColor)`
 - `generate(url: URL)`
 - `generate(email: String)`
 - `generate(phoneNumber: String)`
