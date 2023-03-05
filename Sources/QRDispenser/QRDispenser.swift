@@ -16,10 +16,10 @@ import UIKit
 
 /// Enumeration used to indicate which type of encryption is present in
 /// the wifi network that is going to be represented with a QR code.
-public enum WiFiEncryption {
-    case wep
-    case wpa
-    case none
+public enum WiFiEncryption: String, CaseIterable {
+    case wep    = "wep"
+    case wpa    = "wpa"
+    case none   = "none"
     
     var string: String {
         switch self {
