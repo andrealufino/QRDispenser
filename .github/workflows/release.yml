@@ -18,12 +18,16 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set output
         id: vars
-        run: echo "tag=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_OUTPUT
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ steps.vars.outputs.tag }}
-          release_name: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo "tag=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_OUTPUT
+          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
+        
+#     - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@latest
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+#        with:
+#          tag_name: ${{ steps.vars.outputs.tag }}
+#          release_name: ${{ steps.vars.outputs.tag }}
