@@ -1,4 +1,4 @@
-- name: Release
+name: Release
   # You may pin to the exact commit or the version.
   # uses: ncipollo/release-action@a2e71bdd4e7dab70ca26a852f29600c98b33153e
   uses: ncipollo/release-action@v1.12.0
@@ -59,3 +59,4 @@
     token: # optional, default is ${{ github.token }}
     # When allowUpdates is enabled, this will fail the action if the release it is updating is not a draft or a prerelease.
     updateOnlyUnreleased: # optional, default is false
+
