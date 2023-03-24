@@ -34,7 +34,7 @@ fileprivate extension Validator {
     
     static func validateURL(_ url: String) -> Bool {
         
-        let regex = "((http|https|ftp)://)?((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
+        let regex = "((?:http|https)://)?(?:www\\.)?[\\w\\d\\-_]+\\.\\w{2,3}(\\.\\w{2})?(/(?<=/)(?:[\\w\\d\\-./_]+)?)?"
         let url = url
         let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
         
@@ -43,7 +43,7 @@ fileprivate extension Validator {
     
     static func validateURL(_ url: URL) -> Bool {
         
-        let regex = "((http|https|ftp)://)?((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
+        let regex = "((?:http|https)://)?(?:www\\.)?[\\w\\d\\-_]+\\.\\w{2,3}(\\.\\w{2})?(/(?<=/)(?:[\\w\\d\\-./_]+)?)?"
         let url = url.absoluteString
         let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
         
